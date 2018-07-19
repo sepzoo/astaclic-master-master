@@ -29,6 +29,10 @@
     <!-- loading css -->
     <link rel="stylesheet" href="assets/css/loading.css">
 
+    <link rel="stylesheet" href="assets/css/myChat.css">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ"
+        crossorigin="anonymous">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
 
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
@@ -402,7 +406,7 @@
         </div>
 
         <!-- DASHBOARD -->
-        <div class="content mt-3" id="dashboard">
+        <div class="content mt-3" id="dashboard" style="display: none">
 
             <div class="col-sm-12">
                 <div class="alert  alert-success alert-dismissible fade show" role="alert">
@@ -824,11 +828,49 @@
         </div>
 
         <!-- ASTA INFO -->
-        <div class="content mt-3" id="aste-info" style="display: none">
+        <div class="content mt-3" id="aste-info">
             <div class="col-sm-6">prova</div>
             <div class="col-sm-6">
-                <iframe src="chat.html" frameborder="0" scrolling="no" style="width: 100%; height: 450px;"></iframe>
+                <!-- CHAT -->
+                <div class="container chat-container">
+                    <!-- messaggi qui -->
+                    <div class="message-container col-sm-12">
+                        <!-- My message -->
+                        <div class="col-md-8 offset-md-4">
+                            <div class="my-message">
+                                <div class="avatar">
+                                    <img class="img-circle" style="width:100%;" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+                                </div>
+                                <div class="text">
+                                    Come stai oggi? Spero tutto bene, cazzo mi sa che funziona che figata immensa. ottimo ottimo ottimo
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Other message -->
+                        <div class="col-md-8">
+                            <div class="other-message">
+                                <div class="avatar">
+                                    <img class="img-circle" style="width:100%;" src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="">
+                                </div>
+                                <div class="text">
+                                    Sei un grande, cioè troppo bravo assai. Complimentoni cazzo!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="chat-bottom-container col-sm-12">
+                        <div class="col-sm-10 chat-input-container">
+                            <input class="col-sm-12 form-control" type="text" name="" id="" placeholder="type your message here">
+                        </div>
+
+                        <div class="col-sm-2 chat-button-container">
+                            <a id="chat-send-button">
+                                <i style="font-size: 1.5em" class="fas fa-greater-than"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-sm-6">
                 <div class="card" id="card-desc-asta">

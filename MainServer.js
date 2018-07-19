@@ -249,7 +249,8 @@ websocketServer.on(
 websocketServer.on("authenticated", function (socketC) {
   console.log("Un Utente si è collegato");
 
-  users[socketC.request.session.user.nickname] = socketC; // Inseriamo nell'Array Users la Socket
+  if (socketC.request.session.user)
+    users[socketC.request.session.user.nickname] = socketC; // Inseriamo nell'Array Users la Socket
 
   socketC.on("logout_event", function (data) {
     console.log("Server -> socket:", data);
@@ -263,14 +264,22 @@ websocketServer.on("authenticated", function (socketC) {
     }
   });
 
+  var _room;
   // GESTIONE ROOM
   socketC.on("room-joined", function (room) {
     socketC.join(room);
-    console.log('qualcuno si è connesso alla room', room);
-
-    socketC.on("message-send", function (data) {
-      websocketServer.in(room).emit("message-rec", data)
+    _room = room;
+    socketC.request.session.user.room = room;
+    socketC.request.session.save(function (err) {
+      if (err) console.log(err);
+      console.log("room aggiunta alla sessione del client")
     })
+    console.log('qualcuno si è connesso alla room', room);
+  })
+
+  socketC.on("message-send", function (data) {
+    console.log('messaggio arrivato', data);
+    websocketServer.in(_room).emit("message-rec", data)
   })
 });
 

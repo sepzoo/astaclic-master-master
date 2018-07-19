@@ -73,6 +73,7 @@ jQuery(document).ready(function ($) {
       if (text !== "") {
         insertChat("me", text);
         $(this).val("");
+
         App.socketSendMessage(text)
       }
     }
@@ -85,8 +86,7 @@ jQuery(document).ready(function ($) {
   //-- Clear Chat
   resetChat();
 
-  if (App.socket)
-    App.socketGetMessage(function () {
-      console.log('ok')
-    });
+  // App.socket.on("message-rec", function () {
+  //   console.log("messaggio ricevuto")
+  // })
 });
