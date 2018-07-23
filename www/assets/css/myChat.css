@@ -36,11 +36,15 @@
     display:flex;
     justify-content:center;
     align-items:center;
-    width: 30%;
+    width:60%;
     float:left;
     margin-right:10px;
 }
 
 .img-circle{
     border-radius: 50%;
+}
+
+.text{
+    padding: 5px;
 }

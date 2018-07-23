@@ -40,18 +40,21 @@ var App = {
       console.log('room joinata')
       jQuery(document).ready(function ($) {
         function insertOtherMessage(name, text) {
-          var element = '<div class="col-md-8">\
-          <div class="other-message">\
+          var element = '<div class="col-md-12 other-message">\
+          <div class="col-md-4">\
               <div class="avatar">\
-                  <img class="img-circle" style="width:100%;" src="'+ avatar1 + '" alt="">\
+                  <img class="img-circle" style="width:100%;" src="'+ avatar2 + '" alt="">\
               </div>\
-              <div class="text">\
-                  '+ name + ': ' + text + '\
+          </div>\
+          <div class="col-md-8">\
+              <div class="text" style="background: ghostwhite">\
+                 '+ name + ': ' + text + '\
               </div>\
           </div>\
       </div>'
 
           $('.message-container').append(element);
+          $('.message-container').scrollTop($(".message-container").prop("scrollHeight"));
         }
 
         App.socket.on("messageReceived", function (data) {
@@ -77,28 +80,33 @@ jQuery(document).ready(function ($) {
 
   function insertMyMessage(text) {
     var element =
-      '<div class="col-md-8 offset-md-4">\
-      <div class="my-message">\
-          <div class="avatar">\
-              <img class="img-circle" style="width:100%;" src="'+ avatar2 + '" alt="">\
-          </div>\
-          <div class="text">\
-              '+ 'me: ' + text + '\
-          </div>\
-      </div>\
-  </div>';
+      '<div class="col-md-12 my-message">\
+    <div class="col-md-8">\
+        <div class="text" style="background: rgb(167, 238, 146)">\
+            me: '+ text + '\
+        </div>\
+    </div>\
+    <div class="col-md-4">\
+        <div class="avatar">\
+            <img class="img-circle" style="width:100%;" src="'+ avatar1 + '" alt="">\
+        </div>\
+    </div>\
+</div>'
 
     $('.message-container').append(element);
+    $('.message-container').scrollTop($(".message-container").prop("scrollHeight"));
   }
 
   function insertOtherMessage(name, text) {
-    var element = '<div class="col-md-8">\
-    <div class="other-message">\
+    var element = '<div class="col-md-12 other-message">\
+    <div class="col-md-4">\
         <div class="avatar">\
-            <img class="img-circle" style="width:100%;" src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="">\
+            <img class="img-circle" style="width:100%;" src="'+ avatar2 + '" alt="">\
         </div>\
-        <div class="text">\
-            '+ name + ': ' + text + '\
+    </div>\
+    <div class="col - md - 8">\
+        <div class="text" style="background: ghostwhite">\
+           '+ name + ': ' + text + '\
         </div>\
     </div>\
 </div>'
