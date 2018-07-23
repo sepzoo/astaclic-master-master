@@ -112,12 +112,6 @@ jQuery(document).ready(function ($) {
       $.get("/session", callback_function);
     },
 
-    checkSocket: function () {
-      console.log(App.socket)
-      if (App.socket != null) $('#status-socket').html("ON");
-      else $('#status-socket').html("OFF")
-    },
-
     /**
      * FUNZIONE per
      *      COLLEGARSI al SERVER
@@ -155,13 +149,13 @@ jQuery(document).ready(function ($) {
         // la sessione esiste perchè il token è stato creato.
         console.log("/session", data);
         AppName.username = data.nickname;
+        App.user = data.nickname;
         App.connection_server(data.token, function () {
           AppName.changePage(pagina_attuale, AppName.goDashboard, AppName.stopLoading)
         });
       } else {
         // fai qualcosa se il token non è stato creato, quindi la sessione non esiste.
       }
-      AppName.checkSocket();
     },
 
     /**
@@ -302,8 +296,6 @@ jQuery(document).ready(function ($) {
   AppName.init();
   AppName.logging();
 
-  // Controlliamo lo stato della socket ogni 60 s
-  setInterval(AppName.checkSocket, 1000 * 30)
   // if (pagina_attuale == "dashboard" || pagina_attuale == null) {
   //   console.log(true);
   //   AppName.changePage("dashboard", AppName.goDashboard, AppName.stopLoading);

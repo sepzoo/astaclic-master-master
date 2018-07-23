@@ -246,6 +246,7 @@ websocketServer.on(
   })
 );
 
+var _room;
 websocketServer.on("authenticated", function (socketC) {
   console.log("Un Utente si è collegato");
 
@@ -264,9 +265,9 @@ websocketServer.on("authenticated", function (socketC) {
     }
   });
 
-  var _room;
+
   // GESTIONE ROOM
-  socketC.on("room-joined", function (room) {
+  socketC.on("roomJoined", function (room) {
     socketC.join(room);
     _room = room;
     socketC.request.session.user.room = room;
@@ -275,11 +276,12 @@ websocketServer.on("authenticated", function (socketC) {
       console.log("room aggiunta alla sessione del client")
     })
     console.log('qualcuno si è connesso alla room', room);
+    socketC.emit("joinedIntoRoom");
   })
 
-  socketC.on("message-send", function (data) {
-    console.log('messaggio arrivato', data);
-    websocketServer.in(_room).emit("message-rec", data)
+  socketC.on("sendMessage", function (data) {
+    console.log('messaggio arrivato', data, socketC.request.session.user.room);
+    socketC.in(socketC.request.session.user.room).emit("messageReceived", data)
   })
 });
 
