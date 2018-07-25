@@ -19,7 +19,7 @@ var session = require("express-session");
 var mySecret = "random-word";
 
 var users = [];
-var users_nickname = ['pippo@mail.com', 'pippo'];
+var users_nickname = [{ username: 'pippo@mail.com', password: '123456', level: 'A' }, { username: 'pippo', password: '123456', level: 'U' }];
 
 var aste = [
   {
@@ -113,7 +113,7 @@ var sessionMidleware = session({
   saveUninitialized: true, // Salva una sessione che è nuova, ma non è stata modificata
   cookie: {
     //secure: true, //Note be careful when setting this to true, as compliant clients will not send the cookie back to the server in the future if the browser does not have an HTTPS connection. Please note that secure: true is a recommended option. However, it requires an https-enabled website, i.e., HTTPS is necessary for secure cookies
-    maxAge: 600000
+    maxAge: 6000000
   }
 });
 
@@ -127,7 +127,14 @@ app.use(sessionMidleware);
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 
+
 app.use("/", express.static("www"));
+
+// app.use("/admin", express.static("www_admin"));
+
+// app.get('/', function (req, res) {
+//   res.redirect('http://localhost/admin/page-login.html')
+// })
 
 //MODULO LOGIN
 var checkLoginInput = function (req, res, next) {
@@ -137,7 +144,18 @@ var checkLoginInput = function (req, res, next) {
 
 var checkLoginDb = function (req, res, next) {
   /* Controlliamo se l'username è già presente in un eventuale DataBase*/
-  if (users_nickname.indexOf(req.body.nickname) == -1) {
+  console.log(req.body.nickname)
+
+  var user = {}
+  users_nickname.forEach(function (snap) {
+    if (snap.username == req.body.nickname) {
+      console.log('utente trovato');
+      user = snap;
+      return;
+    }
+  })
+
+  if (!user) {
     console.log("Utente non registrato.");
     // Inviare dati per farsi registrare.
     res.send({
@@ -145,29 +163,50 @@ var checkLoginDb = function (req, res, next) {
       message: "Utente non registrato. Registrati!"
     });
     console.log("Utente non in DB ", users_nickname);
-  } else {
-    console.log("Utente presente, quindi puoi accedere all'account.");
-    next();
   }
+
+  else {
+    console.log('Utente registrato', user);
+
+    //se login riesce
+    req.session.user = {
+      level: user.level,
+      nickname: req.body.nickname,
+      token: jwt.sign({ nickname: req.body.nickname, ts: Date.now() }, mySecret)
+    };
+
+    console.log("checkLoginRespond: Creazione Sessione");
+    // Salviamo la sessione
+    req.session.save(function (err) {
+      if (err) console.error(err);
+
+      console.log("checkLoginRespond: Salvataggio Sessione Avvenuto.");
+      let data = { result: true, token: req.session.user.token, level: req.session.user.level }
+      res.send(data);
+      next();
+    });
+  }
+
+
+  // if (users_nickname.username.indexOf(req.body.nickname) == -1) {
+  //   console.log("Utente non registrato.");
+  //   // Inviare dati per farsi registrare.
+  //   res.send({
+  //     notRegistered: true,
+  //     message: "Utente non registrato. Registrati!"
+  //   });
+  //   console.log("Utente non in DB ", users_nickname);
+  // } else {
+  //   console.log("Utente presente, quindi puoi accedere all'account.");
+  //   next();
+  // }
 };
 
 var checkLoginRespond = function (req, res) {
-  //se login riesce
-  req.session.user = {
-    nickname: req.body.nickname,
-    token: jwt.sign({ nickname: req.body.nickname, ts: Date.now() }, mySecret)
-  };
-
-  console.log("checkLoginRespond: Creazione Sessione");
-  // Salviamo la sessione
-  req.session.save(function (err) {
-    if (err) console.error(err);
-
-    console.log("checkLoginRespond: Salvataggio Sessione Avvenuto.");
-    let data = { result: true, token: req.session.user.token }
-    res.send(data);
-  });
-};
+  if (req.session.user.level == 'A') {
+    app.use('/admin', express.static("www_admin"))
+  }
+}
 
 var getAste = function (req, res) {
   res.send(aste);
@@ -229,6 +268,14 @@ app.get("/session", getSession);
 app.get("/aste-attive", getAsteAttive);
 app.get("/aste-table", getAsteTable);
 
+app.get("/admin", function (req, res) {
+  if (req.session.user.level != 'A') {
+    console.log('Utente non auterizzato');
+    res.send('No autorized')
+  }
+  else res.sendfile(__dirname + '/www_admin')
+})
+
 var destroySession = function (req, res) {
   req.session.destroy(function (err) {
     console.log("Server -> Sessione distrutta.");
@@ -250,8 +297,8 @@ var _room;
 websocketServer.on("authenticated", function (socketC) {
   console.log("Un Utente si è collegato");
 
-  if (socketC.request.session.user)
-    users[socketC.request.session.user.nickname] = socketC; // Inseriamo nell'Array Users la Socket
+  // if (socketC.request.session.user)
+  users[socketC.request.session.user.nickname] = socketC; // Inseriamo nell'Array Users la Socket
 
   socketC.on("logout_event", function (data) {
     console.log("Server -> socket:", data);

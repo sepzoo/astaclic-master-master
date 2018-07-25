@@ -49,6 +49,7 @@ jQuery(document).ready(function ($) {
     aste: [],
     text: "ciao",
     init: function () {
+
       /**
        * Click per attivare la
        *      FUNZIONE DI LOGOUT
@@ -128,7 +129,9 @@ jQuery(document).ready(function ($) {
         if (data.result) {
           //se il login vaa buon fine ed ho il token, lo uso per aprire la connessione
           App.connection_server(data.token, function () {
-            $(location).attr("href", "/")
+            if (data.level == 'A') $(location).attr("href", "/admin")
+            else
+              $(location).attr("href", "/")
           });
         } else {
           console.log("Username o Password Sbagliata!");
@@ -208,6 +211,8 @@ jQuery(document).ready(function ($) {
 
     goAsteInfo: function (page, next, name) {
       console.log("go aste info");
+
+      // trasformiamo la post in get
       $.post("/asta-info", { name: name.title }, function (data) {
         console.log("dati in arrivo", data);
         AppName.addAstaInfo(data);
@@ -217,32 +222,48 @@ jQuery(document).ready(function ($) {
     },
 
     addAstaInfo: function (snap) {
-      var cardBody =
-        '<div class="card-header">\
-					<strong>Info asta</strong>\
-				</div>\
-					<div class="card-body">\
-				 Titolo: ' +
-        snap.title +
-        " <br>\
-				 Fine: " +
-        snap.fine +
-        "<br>\
-				 Vincitore: " +
-        snap.vincitore +
-        "<br>\
-				 Valore: " +
-        snap.valore_attuale +
-        "<br>\
-				 Rilancio: " +
-        snap.rilancio_minimo +
-        "<br>\
-				 Stato: " +
-        snap.stato +
-        "<br>\
-				</div>";
+      var element = ' <aside class="profile-nav alt">\
+        <section class="card">\
+            <div class="card-header user-header alt bg-dark">\
+                <div class="media">\
+                    <a href="#">\
+                        <img class="align-self-center rounded-circle mr-3" style="width:85px; height:85px;" alt="" src="images/admin.jpg">\
+                    </a>\
+                    <div class="media-body">\
+                        <h2 class="text-light display-6">'+ snap.vincitore + '</h2>\
+                    </div>\
+                </div>\
+            </div>\
+            <ul class="list-group list-group-flush">\
+                <li class="list-group-item">\
+                    <a href="#">\
+                        <i class="fa fa-envelope-o"></i> '+ snap.title + '\
+                        <span class="badge badge-primary pull-right">10</span>\
+                    </a>\
+                </li>\
+                <li class="list-group-item">\
+                    <a href="#">\
+                        <i class="fa fa-tasks"></i> '+ snap.fine + '\
+                        <span class="badge badge-danger pull-right">15</span>\
+                    </a>\
+                </li>\
+                <li class="list-group-item">\
+                    <a href="#">\
+                        <i class="fa fa-bell-o"></i> '+ snap.valore_attuale + '\
+                        <span class="badge badge-success pull-right">11</span>\
+                    </a>\
+                </li>\
+                <li class="list-group-item">\
+                    <a href="#">\
+                        <i class="fa fa-comments-o"></i> '+ snap.rilancio_minimo + '\
+                        <span class="badge badge-warning pull-right r-activity">03</span>\
+                    </a>\
+                </li>\
+            </ul>\
+        </section>\
+    </aside>'
       $("#card-info-asta").empty();
-      $("#card-info-asta").append(cardBody);
+      $("#card-info-asta").append(element);
     },
 
     addAsteTable: function (data) {
